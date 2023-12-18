@@ -52,6 +52,15 @@ void ubicar (int x, int y)
 	SetConsoleCursorPosition(hCon,dwPos);
 }
 
+void showConsoleCursor(bool showFlag) {
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = showFlag;  // true para mostrar, false para ocultar
+    SetConsoleCursorInfo(out, &cursorInfo);
+}
+
 // Vidas
 void vidas(int vi)
 {
@@ -67,7 +76,7 @@ void barra_salud(int n)
 	
 	for(v = 0; v < n; v++){
 		ubicar(72+v,1); 
-		printf("♥");
+		printf("❤");
 	}
 }
 
@@ -223,6 +232,8 @@ if(kbhit()){
 
 int main()
 {
+
+	showConsoleCursor(false);
 	dibujar_borde();
 	vidas(num_vidas);
 	barra_salud(corazones);
