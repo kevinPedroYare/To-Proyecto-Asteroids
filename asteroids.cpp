@@ -1,5 +1,5 @@
+// LIBRERÍAS NECESARIAS
 #include <windows.h>
-
 #include <iostream>
 #include <conio.h>
 
@@ -171,7 +171,7 @@ if(kbhit()){
 			}
 			break;
 		case DERECHA:
-			if ( ix > 70)
+			if ( ix < 70)
 			{
 				//borrar el avion
 				gotoxy(ix,iy); printf("%s", borrar_avion);
