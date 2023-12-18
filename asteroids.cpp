@@ -116,7 +116,7 @@ void explosion(void)
 void jugar(void)
 {
 	//rutina asteroides
-	ubicar(ix,iy); printf("🌣");
+	ubicar(x,y); printf("🌣");
 	ubicar(xx,yy); printf("🌣");
 	ubicar(x1,ypos1); printf("🌣");
 	ubicar(x2,y2); printf("🌣");
