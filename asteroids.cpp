@@ -32,10 +32,11 @@ int i,v;
 int repeticion = 0, nivel = 1;
 bool condicion = false;
 
-int x = 10, y = 4;
-int xx = 20, yy = 4;
-int x1 = 30, y11 = 4;
-int x2 = 40, y2 = 4;
+// Asteroides
+int x = 12, y = 8;
+int xx = 17, yy = 12;
+int x1 = 58, ypos1 = 6;
+int x2 = 70, y2 = 9;
 
 //Funcion gotoxy
 void gotoxy (int x, int y)
@@ -92,21 +93,21 @@ void pintar()
 }
 
 //Explosion
-void explosion(int x, int y)
+void explosion(void)
 {
-	gotoxy(x,y); printf("%s", explosion_l1);
-	gotoxy(x,y+1); printf("%s", explosion_l2);
-	gotoxy(x,y+2); printf("%s", explosion_l3);
+	gotoxy(ix,iy); printf("%s", explosion_l1);
+	gotoxy(ix,iy+1); printf("%s", explosion_l2);
+	gotoxy(ix,iy+2); printf("%s", explosion_l3);
 	Sleep(200);
 
-	gotoxy(x,y); printf("%s", explosion_r1);
-	gotoxy(x,y+1); printf("%s", explosion_r2);
-	gotoxy(x,y+2); printf("%s", explosion_r3);
+	gotoxy(x,iy); printf("%s", explosion_r1);
+	gotoxy(x,iy+1); printf("%s", explosion_r2);
+	gotoxy(x,iy+2); printf("%s", explosion_r3);
 	Sleep(200);
 
-	gotoxy(x,y); printf("%s", borrar_avion);
-	gotoxy(x,y+1); printf("%s", borrar_avion);
-	gotoxy(x,y+2); printf("%s", borrar_avion);
+	gotoxy(x,iy); printf("%s", borrar_avion);
+	gotoxy(x,iy+1); printf("%s", borrar_avion);
+	gotoxy(x,iy+2); printf("%s", borrar_avion);
 }
 
 //Jugar
@@ -116,14 +117,14 @@ void jugar(void)
 	//rutina asteroides
 	gotoxy(ix,iy); printf("%c", 2);
 	gotoxy(xx,yy); printf("%c", 2);
-	gotoxy(x1,y11); printf("%c", 2);
+	gotoxy(x1,ypos1); printf("%c", 2);
 	gotoxy(x2,y2); printf("%c", 2);
 	Sleep(150);
 
 	//borrar asteroides
 	gotoxy(x,y); printf(" ");
 	gotoxy(xx,yy); printf(" ");
-	gotoxy(x1,y11); printf(" ");
+	gotoxy(x1,ypos1); printf(" ");
 	gotoxy(x2,y2); printf(" ");
 
 	if(y > 20)
@@ -133,20 +134,21 @@ void jugar(void)
 	}
 	if(yy > 20)
 	{
-		y = 4;
-		x = (rand()%70) + 6;
+		yy = 4;
+		xx = (rand()%70) + 6;
 	}
-	if(y11 > 20)
+	if(ypos1 > 20)
 	{
-		y = 4;
-		x = (rand()%70) + 6;
+		ypos1 = 4;
+		x1 = (rand()%70) + 6;
 	}
 	if(y2 > 20)
 	{
-		y = 4;
-		x = (rand()%70) + 6;
+		y2 = 4;
+		x2 = (rand()%70) + 6;
 	}
 
+if(kbhit()){
 	//mover nave
 	unsigned char tecla = getch();
 
@@ -187,6 +189,37 @@ void jugar(void)
 	}
 }
 
+	// golpe asteroide
+	if( 
+		( x > ix && x < ix+6 && y == iy-1) || 
+		( xx > ix && xx < ix+6 && yy == iy-1) || 
+		( x1 > ix && x1 < ix+6 && ypos1 == iy-1) || 
+		( x2 > ix && x2 < ix+6 && y2 == iy-1) 
+	) {
+		corazones--;
+		barra_salud(corazones);
+		printf("\a"); // sonido de impacto
+	}
+
+	gotoxy(ix,iy); printf("%s", avion_l1); 
+	gotoxy(ix,iy+1); printf("%s", avion_l2); 
+	gotoxy(ix,iy+2); printf("%s", avion_l3); 
+
+	if ( corazones == 0) {
+		num_vidas--;
+		vidas(num_vidas);
+		explosion();
+		corazones = 3;
+		barra_salud(corazones);
+
+	}
+	y++;
+	yy++;
+	ypos1++;
+	y2++;
+
+}
+
 int main()
 {
 	pintar();
@@ -197,6 +230,12 @@ int main()
 	gotoxy(ix,iy); printf("%s", avion_l1);
 	gotoxy(ix,iy+1); printf("%s", avion_l2);
 	gotoxy(ix,iy+2); printf("%s", avion_l3);
+
+	while( num_vidas > 0 ) {
+		jugar();
+	}
+
+	gotoxy(34,12); printf("GAME OVER");
 
 	getch();
 	return 0;
