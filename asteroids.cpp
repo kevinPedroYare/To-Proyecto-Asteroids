@@ -24,8 +24,8 @@ char explosion_r3[] = {'*',' ','*','*',' ','*',' ',0};
 char borrar_avion[] = {' ',' ',' ',' ',' ',' ',' ',0};
 
 //Variables
-int num_vidas = 3;
-int corazones = 3;
+int num_vidas = 1;
+int corazones = 5;
 int ix = 35; // x inicial
 int iy = 19; // y inicial
 int i,v;
@@ -182,7 +182,7 @@ if(kbhit()){
 			}
 			break;
 		case DERECHA:
-			if ( ix < 70)
+			if ( ix < 68)
 			{
 				//borrar el avion
 				ubicar(ix,iy); printf("%s", borrar_avion);
