@@ -24,8 +24,8 @@ char explosion_r3[] = {'*',' ','*','*',' ','*',' ',0};
 char borrar_avion[] = {' ',' ',' ',' ',' ',' ',' ',0};
 
 //Variables
-int num_vidas = 3;
-int corazones = 3;
+int num_vidas = 1;
+int corazones = 5;
 int ix = 35; // x inicial
 int iy = 19; // y inicial
 int i,v;
@@ -34,10 +34,10 @@ bool condicion = false;
 const int dimx=78, dimy=23;
 
 // Asteroides
-int x = 12, y = 8;
-int xx = 17, yy = 12;
-int x1 = 58, ypos1 = 6;
-int x2 = 70, y2 = 9;
+int ast1x = 12, ast1y = 8; 		// Posición del asteroide 1
+int ast2x = 17, ast2y = 12;		// Posición del asteroide 2
+int ast3x = 58, ast3y = 6;		// Posición del asteroide 3
+int ast4x = 70, ast4y = 9;		// Posición del asteroide 4
 
 //Funcion ubicar
 void ubicar (int x, int y)
@@ -52,6 +52,7 @@ void ubicar (int x, int y)
 	SetConsoleCursorPosition(hCon,dwPos);
 }
 
+// Mostrar el cursor
 void showConsoleCursor(bool showFlag) {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -125,37 +126,37 @@ void explosion(void)
 void jugar(void)
 {
 	//rutina asteroides
-	ubicar(x,y); printf("🌣");
-	ubicar(xx,yy); printf("🌣");
-	ubicar(x1,ypos1); printf("🌣");
-	ubicar(x2,y2); printf("🌣");
+	ubicar(ast1x,ast1y); printf("🌣");
+	ubicar(ast2x,ast2y); printf("🌣");
+	ubicar(ast3x,ast3y); printf("🌣");
+	ubicar(ast4x,ast4y); printf("🌣");
 	Sleep(150);
 
 	//borrar asteroides
-	ubicar(x,y); printf(" ");
-	ubicar(xx,yy); printf(" ");
-	ubicar(x1,ypos1); printf(" ");
-	ubicar(x2,y2); printf(" ");
+	ubicar(ast1x,ast1y); printf(" ");
+	ubicar(ast2x,ast2y); printf(" ");
+	ubicar(ast3x,ast3y); printf(" ");
+	ubicar(ast4x,ast4y); printf(" ");
 
-	if(y > 20)
+	if( ast1y > 20)
 	{
-		y = 4;
-		x = (rand()%70) + 6;
+		ast1y = 4;
+		ast1x = (rand()%70) + 6;
 	}
-	if(yy > 20)
+	if(ast2y > 20)
 	{
-		yy = 4;
-		xx = (rand()%70) + 6;
+		ast2y = 4;
+		ast2x = (rand()%70) + 6;
 	}
-	if(ypos1 > 20)
+	if(ast3y > 20)
 	{
-		ypos1 = 4;
-		x1 = (rand()%70) + 6;
+		ast3y = 4;
+		ast3x = (rand()%70) + 6;
 	}
-	if(y2 > 20)
+	if(ast4y > 20)
 	{
-		y2 = 4;
-		x2 = (rand()%70) + 6;
+		ast4y = 4;
+		ast4x = (rand()%70) + 6;
 	}
 
 if(kbhit()){
@@ -181,7 +182,7 @@ if(kbhit()){
 			}
 			break;
 		case DERECHA:
-			if ( ix < 70)
+			if ( ix < 68)
 			{
 				//borrar el avion
 				ubicar(ix,iy); printf("%s", borrar_avion);
@@ -201,10 +202,10 @@ if(kbhit()){
 
 	// golpe asteroide
 	if( 
-		( x > ix && x < ix+6 && y == iy-1) || 
-		( xx > ix && xx < ix+6 && yy == iy-1) || 
-		( x1 > ix && x1 < ix+6 && ypos1 == iy-1) || 
-		( x2 > ix && x2 < ix+6 && y2 == iy-1) 
+		( ast1x > ix && ast1x < ix+6 && ast1y == iy-1) || 
+		( ast2x > ix && ast2x < ix+6 && ast2y == iy-1) || 
+		( ast3x > ix && ast3x < ix+6 && ast3y == iy-1) || 
+		( ast4x > ix && ast4x < ix+6 && ast4y == iy-1) 
 	) {
 		corazones--;
 		barra_salud(corazones);
@@ -223,10 +224,10 @@ if(kbhit()){
 		barra_salud(corazones);
 
 	}
-	y++;
-	yy++;
-	ypos1++;
-	y2++;
+	ast1y++;
+	ast2y++;
+	ast3y++;
+	ast4y++;
 
 }
 
