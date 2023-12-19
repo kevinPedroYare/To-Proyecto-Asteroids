@@ -11,9 +11,14 @@
 using namespace std;
 
 //Avion y Explosiones
-char avion_l1[] = {' ',' ',' ', '*',' ',' ',' ',0};
-char avion_l2[] = {' ',' ','*', '*','*',' ',' ',0};
-char avion_l3[] = {' ','*',' ', '*',' ','*',' ',0};
+//char avion_l1[] = {' ',' ',' ', '*',' ',' ',' ',0};
+//char avion_l2[] = {' ',' ','*', '*','*',' ',' ',0};
+//char avion_l3[] = {' ','*',' ', '*',' ','*',' ',0};
+
+char avion_l1[] = {'\\','-','-','-','-','-','/',0};
+char avion_l2[] = {' ','|',' ','R',' ','|',' ',0};
+char avion_l3[] = {' ','|','_','_','_','|',' ',0};
+
 
 char explosion_l1[] = {' ',' ','*','*',' ',' ',' ',0};
 char explosion_l2[] = {' ','*','*','*','*',' ',' ',0};
@@ -40,6 +45,11 @@ int ast1x = 12, ast1y = 8; 		// Posición del asteroide 1
 int ast2x = 17, ast2y = 12;		// Posición del asteroide 2
 int ast3x = 58, ast3y = 6;		// Posición del asteroide 3
 int ast4x = 70, ast4y = 9;		// Posición del asteroide 4
+
+int bas1x = 10, bas1y = 6; 		// Posición de la basura 1
+int bas2x = 14, bas2y = 11;		// Posición de la basura 2
+int bas3x = 45, bas3y = 7;		// Posición de la basura 3
+int bas4x = 65, bas4y = 10;		// Posición de la basura 4
 
 //Funcion ubicar
 void ubicar (int x, int y)
@@ -132,6 +142,14 @@ void jugar(void)
 	ubicar(ast2x,ast2y); printf("🌣");
 	ubicar(ast3x,ast3y); printf("🌣");
 	ubicar(ast4x,ast4y); printf("🌣");
+
+
+	ubicar(bas1x,bas1y); printf("♻︎");
+	ubicar(bas2x,bas2y); printf("♻︎");
+	ubicar(bas3x,bas3y); printf("♻︎");
+	ubicar(bas4x,bas4y); printf("♻︎");
+
+
 	Sleep(150);
 
 	//borrar asteroides
@@ -139,6 +157,11 @@ void jugar(void)
 	ubicar(ast2x,ast2y); printf(" ");
 	ubicar(ast3x,ast3y); printf(" ");
 	ubicar(ast4x,ast4y); printf(" ");
+	
+	ubicar(bas1x,bas1y); printf(" ");
+	ubicar(bas2x,bas2y); printf(" ");
+	ubicar(bas3x,bas3y); printf(" ");
+	ubicar(bas4x,bas4y); printf(" ");
 
 	if( ast1y > 20)
 	{
@@ -159,6 +182,29 @@ void jugar(void)
 	{
 		ast4y = 4;
 		ast4x = (rand()%70) + 6;
+	}
+
+	// BASURA
+
+	if( bas1y > 20)
+	{
+		bas1y = 4;
+		bas1x = (rand()%70) + 6;
+	}
+	if(bas2y > 20)
+	{
+		bas2y = 4;
+		bas2x = (rand()%70) + 6;
+	}
+	if(bas3y > 20)
+	{
+		bas3y = 4;
+		bas3x = (rand()%70) + 6;
+	}
+	if(bas4y > 20)
+	{
+		bas4y = 4;
+		bas4x = (rand()%70) + 6;
 	}
 
 if(kbhit()){
@@ -263,6 +309,12 @@ if(kbhit()){
 	ast2y++;
 	ast3y++;
 	ast4y++;
+
+
+	bas1y++;
+	bas2y++;
+	bas3y++;
+	bas4y++;
 
 }
 
