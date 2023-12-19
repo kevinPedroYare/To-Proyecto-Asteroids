@@ -5,6 +5,8 @@
 
 #define IZQUIERDA 75
 #define DERECHA 77
+#define ARRIBA 72
+#define ABAJO 80
 
 using namespace std;
 
@@ -24,8 +26,8 @@ char explosion_r3[] = {'*',' ','*','*',' ','*',' ',0};
 char borrar_avion[] = {' ',' ',' ',' ',' ',' ',' ',0};
 
 //Variables
-int num_vidas = 1;
-int corazones = 5;
+int num_vidas = 3;
+int corazones = 3;
 int ix = 35; // x inicial
 int iy = 19; // y inicial
 int i,v;
@@ -197,6 +199,39 @@ if(kbhit()){
 				ubicar(ix,iy+2); printf("%s", avion_l3);
 			}
 			break;
+
+			case ARRIBA: // Tecla de flecha arriba
+				if ( iy > 4)
+				{
+					//borrar el avion
+					ubicar(ix,iy); printf("%s", borrar_avion);
+					ubicar(ix,iy+1); printf("%s", borrar_avion);
+					ubicar(ix,iy+2); printf("%s", borrar_avion);
+
+					iy--;
+
+					//dibujar el avion
+					ubicar(ix,iy); printf("%s", avion_l1);
+					ubicar(ix,iy+1); printf("%s", avion_l2);
+					ubicar(ix,iy+2); printf("%s", avion_l3);
+				}
+				break;
+			case ABAJO: // Tecla de flecha abajo
+				if ( iy < dimy - 3)
+				{
+					//borrar el avion
+					ubicar(ix,iy); printf("%s", borrar_avion);
+					ubicar(ix,iy+1); printf("%s", borrar_avion);
+					ubicar(ix,iy+2); printf("%s", borrar_avion);
+
+					iy++;
+
+					//dibujar el avion
+					ubicar(ix,iy); printf("%s", avion_l1);
+					ubicar(ix,iy+1); printf("%s", avion_l2);
+					ubicar(ix,iy+2); printf("%s", avion_l3);
+				}
+				break;
 	}
 }
 
