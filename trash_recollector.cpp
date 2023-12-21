@@ -89,9 +89,11 @@ void dibujar_borde()
 class Elemento {
 public:
     int x, y;
+	int velocidad;
     char aspecto[8];
 
-    Elemento(int x, int y, const char* _aspecto) : x(x), y(y) {
+    Elemento(int x, int y, const char* _aspecto, int _velocidad)
+        : x(x), y(y), velocidad(_velocidad) {
         strcpy(aspecto, _aspecto);
     }
 
@@ -109,7 +111,7 @@ public:
 class Nave : public Elemento {
 public:
 
-    Nave(int x, int y) : Elemento(x, y, "\\____/") {}
+    Nave(int x, int y, int _velocidad) : Elemento(x, y, "\\____/", _velocidad) {}
 
     void mover(int direccion) {
         borrar();
@@ -134,7 +136,7 @@ public:
 };
 class Obstaculo : public Elemento {
 public:
-    Obstaculo(int x, int y) : Elemento(x, y, "P") {}
+    Obstaculo(int x, int y, int _velocidad) : Elemento(x, y, "P", _velocidad) {}
 
     void mover() {
         borrar();
@@ -151,7 +153,7 @@ public:
 
 class Basura : public Elemento {
 public:
-    Basura(int x, int y) : Elemento(x, y, "T") {}
+    Basura(int x, int y,int _velocidad) : Elemento(x, y, "T", _velocidad) {}
 
     void mover() {
         borrar();
@@ -228,14 +230,16 @@ int main() {
 	score_view(score);
 	barra_salud(corazones);
 
-    Nave nave(35, 19);
-	Obstaculo obs1(10, 4), obs2(20, 4), obs3(58, 6), obs4(70, 9);
-    Basura bas1(10, 6), bas2(14, 11), bas3(45, 7), bas4(65, 10);
-    int velocidad = 400;  // Ajuste la velocidad a su preferencia (menos es más rápido)
+    Nave nave(35, 19,50);
+	Obstaculo obs1(10, 4,150), obs2(20, 4,160), obs3(58, 6,170), obs4(70, 9,180);
+    Basura bas1(10, 6,120), bas2(14, 11,130), bas3(45, 7,140), bas4(65, 10,150);
+    int velocidadNave = 60; // Ajuste la velocidad a su preferencia (menos es más rápido)
+	int velocidadObstaculos = 300;  // Ajuste la velocidad a su preferencia (menos es más rápido)	
 
     while (num_vidas > 0) {
         jugar(nave, obs1, obs2, obs3, obs4, bas1, bas2, bas3, bas4);
-        this_thread::sleep_for(chrono::milliseconds(velocidad));  // Añadida pausa para controlar la velocidad
+        this_thread::sleep_for(chrono::milliseconds(velocidadNave));  // Añadida pausa para controlar la velocidad
+		this_thread::sleep_for(chrono::milliseconds(velocidadObstaculos));  // Añadida pausa para controlar la velocidad
     }
 
     ubicar(34, 12);
