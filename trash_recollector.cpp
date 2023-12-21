@@ -10,15 +10,9 @@
 
 using namespace std;
 
-//Avion y Explosiones
-//char avion_l1[] = {' ',' ',' ', '*',' ',' ',' ',0};
-//char avion_l2[] = {' ',' ','*', '*','*',' ',' ',0};
-//char avion_l3[] = {' ','*',' ', '*',' ','*',' ',0};
-
-char avion_l1[] = {'\\','-','-','-','-','-','/',0};
-char avion_l2[] = {' ','|',' ','R',' ','|',' ',0};
-char avion_l3[] = {' ','|','_','_','_','|',' ',0};
-
+char box_l1[] = {'\\','-','-','-','-','-','/',0};
+char box_l2[] = {' ','|',' ','R',' ','|',' ',0};
+char box_l3[] = {' ','|','_','_','_','|',' ',0};
 
 char explosion_l1[] = {' ',' ','*','*',' ',' ',' ',0};
 char explosion_l2[] = {' ','*','*','*','*',' ',' ',0};
@@ -28,7 +22,7 @@ char explosion_r1[] = {'*',' ','*','*',' ','*',' ',0};
 char explosion_r2[] = {' ','*','*','*','*',' ',' ',0};
 char explosion_r3[] = {'*',' ','*','*',' ','*',' ',0};
 
-char borrar_avion[] = {' ',' ',' ',' ',' ',' ',' ',0};
+char borrar_box[] = {' ',' ',' ',' ',' ',' ',' ',0};
 
 //Variables
 int num_vidas = 3;
@@ -36,16 +30,18 @@ int corazones = 3;
 int ix = 35; // x inicial
 int iy = 19; // y inicial
 int i,v;
+int score = 0;
 int repeticion = 0, nivel = 1;
 bool condicion = false;
 const int dimx=78, dimy=23;
 
-// Asteroides
-int ast1x = 12, ast1y = 8; 		// Posición del asteroide 1
-int ast2x = 17, ast2y = 12;		// Posición del asteroide 2
-int ast3x = 58, ast3y = 6;		// Posición del asteroide 3
-int ast4x = 70, ast4y = 9;		// Posición del asteroide 4
+// Obstáculos
+int obs1x = 12, obs1y = 8; 		// Posición del obstáculo 1
+int obs2x = 17, obs2y = 12;		// Posición del obstáculo 2
+int obs3x = 58, obs3y = 6;		// Posición del obstáculo 3
+int obs4x = 70, obs4y = 9;		// Posición del obstáculo 4
 
+// Basuras
 int bas1x = 10, bas1y = 6; 		// Posición de la basura 1
 int bas2x = 14, bas2y = 11;		// Posición de la basura 2
 int bas3x = 45, bas3y = 7;		// Posición de la basura 3
@@ -78,6 +74,12 @@ void showConsoleCursor(bool showFlag) {
 void vidas(int vi)
 {
 	ubicar(2,1); printf("VIDAS %d", vi);
+}
+
+// Score
+void score_view(int s)
+{
+	ubicar(2,25); printf("SCORE %d", s);
 }
 
 // Barra de salud
@@ -128,9 +130,9 @@ void explosion(void)
 	ubicar(ix,iy+2); printf("%s", explosion_r3);
 	Sleep(350);
 
-	ubicar(ix,iy); printf("%s", borrar_avion);
-	ubicar(ix,iy+1); printf("%s", borrar_avion);
-	ubicar(ix,iy+2); printf("%s", borrar_avion);
+	ubicar(ix,iy); printf("%s", borrar_box);
+	ubicar(ix,iy+1); printf("%s", borrar_box);
+	ubicar(ix,iy+2); printf("%s", borrar_box);
 }
 
 //Jugar
@@ -138,10 +140,10 @@ void explosion(void)
 void jugar(void)
 {
 	//rutina asteroides
-	ubicar(ast1x,ast1y); printf("🌣");
-	ubicar(ast2x,ast2y); printf("🌣");
-	ubicar(ast3x,ast3y); printf("🌣");
-	ubicar(ast4x,ast4y); printf("🌣");
+	ubicar(obs1x,obs1y); printf("🌣");
+	ubicar(obs2x,obs2y); printf("🌣");
+	ubicar(obs3x,obs3y); printf("🌣");
+	ubicar(obs4x,obs4y); printf("🌣");
 
 
 	ubicar(bas1x,bas1y); printf("♻︎");
@@ -152,40 +154,41 @@ void jugar(void)
 
 	Sleep(150);
 
-	//borrar asteroides
-	ubicar(ast1x,ast1y); printf(" ");
-	ubicar(ast2x,ast2y); printf(" ");
-	ubicar(ast3x,ast3y); printf(" ");
-	ubicar(ast4x,ast4y); printf(" ");
+	//borrar obstáculos
+	ubicar(obs1x,obs1y); printf(" ");
+	ubicar(obs2x,obs2y); printf(" ");
+	ubicar(obs3x,obs3y); printf(" ");
+	ubicar(obs4x,obs4y); printf(" ");
 	
+	//borrar basura
 	ubicar(bas1x,bas1y); printf(" ");
 	ubicar(bas2x,bas2y); printf(" ");
 	ubicar(bas3x,bas3y); printf(" ");
 	ubicar(bas4x,bas4y); printf(" ");
 
-	if( ast1y > 20)
+	// Obstáculos
+	if( obs1y > 20)
 	{
-		ast1y = 4;
-		ast1x = (rand()%70) + 6;
+		obs1y = 4;
+		obs1x = (rand()%70) + 6;
 	}
-	if(ast2y > 20)
+	if(obs2y > 20)
 	{
-		ast2y = 4;
-		ast2x = (rand()%70) + 6;
+		obs2y = 4;
+		obs2x = (rand()%70) + 6;
 	}
-	if(ast3y > 20)
+	if(obs3y > 20)
 	{
-		ast3y = 4;
-		ast3x = (rand()%70) + 6;
+		obs3y = 4;
+		obs3x = (rand()%70) + 6;
 	}
-	if(ast4y > 20)
+	if(obs4y > 20)
 	{
-		ast4y = 4;
-		ast4x = (rand()%70) + 6;
+		obs4y = 4;
+		obs4x = (rand()%70) + 6;
 	}
 
 	// BASURA
-
 	if( bas1y > 20)
 	{
 		bas1y = 4;
@@ -217,32 +220,32 @@ if(kbhit()){
 			if ( ix > 4)
 			{
 				//borrar el avion
-				ubicar(ix,iy); printf("%s", borrar_avion);
-				ubicar(ix,iy+1); printf("%s", borrar_avion);
-				ubicar(ix,iy+2); printf("%s", borrar_avion);
+				ubicar(ix,iy); printf("%s", borrar_box);
+				ubicar(ix,iy+1); printf("%s", borrar_box);
+				ubicar(ix,iy+2); printf("%s", borrar_box);
 
 				ix -=2;
 
 				//dibujar_borde el avion
-				ubicar(ix,iy); printf("%s", avion_l1);
-				ubicar(ix,iy+1); printf("%s", avion_l2);
-				ubicar(ix,iy+2); printf("%s", avion_l3);
+				ubicar(ix,iy); printf("%s", box_l1);
+				ubicar(ix,iy+1); printf("%s", box_l2);
+				ubicar(ix,iy+2); printf("%s", box_l3);
 			}
 			break;
 		case DERECHA:
 			if ( ix < 68)
 			{
 				//borrar el avion
-				ubicar(ix,iy); printf("%s", borrar_avion);
-				ubicar(ix,iy+1); printf("%s", borrar_avion);
-				ubicar(ix,iy+2); printf("%s", borrar_avion);
+				ubicar(ix,iy); printf("%s", borrar_box);
+				ubicar(ix,iy+1); printf("%s", borrar_box);
+				ubicar(ix,iy+2); printf("%s", borrar_box);
 
 				ix +=2;
 
 				//dibujar_borde el avion
-				ubicar(ix,iy); printf("%s", avion_l1);
-				ubicar(ix,iy+1); printf("%s", avion_l2);
-				ubicar(ix,iy+2); printf("%s", avion_l3);
+				ubicar(ix,iy); printf("%s", box_l1);
+				ubicar(ix,iy+1); printf("%s", box_l2);
+				ubicar(ix,iy+2); printf("%s", box_l3);
 			}
 			break;
 
@@ -250,52 +253,62 @@ if(kbhit()){
 				if ( iy > 4)
 				{
 					//borrar el avion
-					ubicar(ix,iy); printf("%s", borrar_avion);
-					ubicar(ix,iy+1); printf("%s", borrar_avion);
-					ubicar(ix,iy+2); printf("%s", borrar_avion);
+					ubicar(ix,iy); printf("%s", borrar_box);
+					ubicar(ix,iy+1); printf("%s", borrar_box);
+					ubicar(ix,iy+2); printf("%s", borrar_box);
 
 					iy--;
 
 					//dibujar el avion
-					ubicar(ix,iy); printf("%s", avion_l1);
-					ubicar(ix,iy+1); printf("%s", avion_l2);
-					ubicar(ix,iy+2); printf("%s", avion_l3);
+					ubicar(ix,iy); printf("%s", box_l1);
+					ubicar(ix,iy+1); printf("%s", box_l2);
+					ubicar(ix,iy+2); printf("%s", box_l3);
 				}
 				break;
 			case ABAJO: // Tecla de flecha abajo
 				if ( iy < dimy - 3)
 				{
 					//borrar el avion
-					ubicar(ix,iy); printf("%s", borrar_avion);
-					ubicar(ix,iy+1); printf("%s", borrar_avion);
-					ubicar(ix,iy+2); printf("%s", borrar_avion);
+					ubicar(ix,iy); printf("%s", borrar_box);
+					ubicar(ix,iy+1); printf("%s", borrar_box);
+					ubicar(ix,iy+2); printf("%s", borrar_box);
 
 					iy++;
 
 					//dibujar el avion
-					ubicar(ix,iy); printf("%s", avion_l1);
-					ubicar(ix,iy+1); printf("%s", avion_l2);
-					ubicar(ix,iy+2); printf("%s", avion_l3);
+					ubicar(ix,iy); printf("%s", box_l1);
+					ubicar(ix,iy+1); printf("%s", box_l2);
+					ubicar(ix,iy+2); printf("%s", box_l3);
 				}
 				break;
 	}
 }
 
-	// golpe asteroide
+	// Golpe Obstáculo
 	if( 
-		( ast1x > ix && ast1x < ix+6 && ast1y == iy-1) || 
-		( ast2x > ix && ast2x < ix+6 && ast2y == iy-1) || 
-		( ast3x > ix && ast3x < ix+6 && ast3y == iy-1) || 
-		( ast4x > ix && ast4x < ix+6 && ast4y == iy-1) 
+		( obs1x > ix && obs1x < ix+6 && obs1y == iy-1) || 
+		( obs2x > ix && obs2x < ix+6 && obs2y == iy-1) || 
+		( obs3x > ix && obs3x < ix+6 && obs3y == iy-1) || 
+		( obs4x > ix && obs4x < ix+6 && obs4y == iy-1) 
 	) {
 		corazones--;
 		barra_salud(corazones);
 		printf("\a"); // sonido de impacto
 	}
 
-	ubicar(ix,iy); printf("%s", avion_l1); 
-	ubicar(ix,iy+1); printf("%s", avion_l2); 
-	ubicar(ix,iy+2); printf("%s", avion_l3); 
+	if( 
+		( bas1x > ix && bas1x < ix+6 && bas1y == iy-1) || 
+		( bas2x > ix && bas2x < ix+6 && bas2y == iy-1) || 
+		( bas3x > ix && bas3x < ix+6 && bas3y == iy-1) || 
+		( bas4x > ix && bas4x < ix+6 && bas4y == iy-1) 
+	) {
+		score++;
+		score_view(score);
+	}
+
+	ubicar(ix,iy); printf("%s", box_l1); 
+	ubicar(ix,iy+1); printf("%s", box_l2); 
+	ubicar(ix,iy+2); printf("%s", box_l3); 
 
 	if ( corazones == 0) {
 		num_vidas--;
@@ -303,12 +316,11 @@ if(kbhit()){
 		explosion();
 		corazones = 3;
 		barra_salud(corazones);
-
 	}
-	ast1y++;
-	ast2y++;
-	ast3y++;
-	ast4y++;
+	obs1y++;
+	obs2y++;
+	obs3y++;
+	obs4y++;
 
 
 	bas1y++;
@@ -324,12 +336,13 @@ int main()
 	showConsoleCursor(false);
 	dibujar_borde();
 	vidas(num_vidas);
+	score_view(score);
 	barra_salud(corazones);
 
 	//Avion
-	ubicar(ix,iy); printf("%s", avion_l1);
-	ubicar(ix,iy+1); printf("%s", avion_l2);
-	ubicar(ix,iy+2); printf("%s", avion_l3);
+	ubicar(ix,iy); printf("%s", box_l1);
+	ubicar(ix,iy+1); printf("%s", box_l2);
+	ubicar(ix,iy+2); printf("%s", box_l3);
 
 	while( num_vidas > 0 ) {
 		jugar();
