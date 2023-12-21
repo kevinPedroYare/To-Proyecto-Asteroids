@@ -91,7 +91,7 @@ void barra_salud(int n)
 	
 	for(v = 0; v < n; v++){
 		ubicar(72+v,1); 
-		printf("❤");
+		printf("%c", 3);
 	}
 }
 
@@ -101,20 +101,20 @@ void dibujar_borde()
 	//lineas horizontales
 	for(int i = 2; i < dimx; i++)
 	{
-		ubicar(i,3); printf_s("═");
-		ubicar(i,23); printf_s("═");
+		ubicar(i,3); printf_s("%c", 205);
+		ubicar(i,23); printf_s("%c", 205);
 	}
 	//lineas verticales
 	for(int i = 4; i < dimy; i++)
 	{
-		ubicar(2,i); printf_s("║");
-		ubicar(77,i); printf_s("║");
+		ubicar(2,i); printf_s("%c", 186);
+		ubicar(77,i); printf_s("%c", 186);
 	}
 	//esquinas
-	ubicar(2,3); printf_s("╔");
-	ubicar(2,23); printf_s("╚");
-	ubicar(77,3); printf_s("╗");
-	ubicar(77,23); printf_s("╝");
+	ubicar(2,3); printf_s("%c", 201);
+	ubicar(2,23); printf_s("%c", 200);
+	ubicar(77,3); printf_s("%c", 187);
+	ubicar(77,23); printf_s("%c", 188);
 }
 
 //Explosion
@@ -140,16 +140,16 @@ void explosion(void)
 void jugar(void)
 {
 	//rutina asteroides
-	ubicar(obs1x,obs1y); printf("🌣");
-	ubicar(obs2x,obs2y); printf("🌣");
-	ubicar(obs3x,obs3y); printf("🌣");
-	ubicar(obs4x,obs4y); printf("🌣");
+	ubicar(obs1x,obs1y); printf("%c", 251);
+	ubicar(obs2x,obs2y); printf("%c", 251);
+	ubicar(obs3x,obs3y); printf("%c", 251);
+	ubicar(obs4x,obs4y); printf("%c", 251);
 
 
-	ubicar(bas1x,bas1y); printf("♻︎");
-	ubicar(bas2x,bas2y); printf("♻︎");
-	ubicar(bas3x,bas3y); printf("♻︎");
-	ubicar(bas4x,bas4y); printf("♻︎");
+	ubicar(bas1x,bas1y); printf("%c", 184);
+	ubicar(bas2x,bas2y); printf("%c", 184);
+	ubicar(bas3x,bas3y); printf("%c", 184);
+	ubicar(bas4x,bas4y); printf("%c", 184);
 
 
 	Sleep(150);
