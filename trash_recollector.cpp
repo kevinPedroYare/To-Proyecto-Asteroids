@@ -1,7 +1,8 @@
-// LIBRERÍAS NECESARIAS
 #include <windows.h>
 #include <iostream>
 #include <conio.h>
+#include <mmsystem.h>
+#include <thread>  // Se agrega la librería para gestionar el tiempo de espera
 
 #define IZQUIERDA 75
 #define DERECHA 77
@@ -10,346 +11,219 @@
 
 using namespace std;
 
-char box_l1[] = {'\\','-','-','-','-','-','/',0};
-char box_l2[] = {' ','|',' ','R',' ','|',' ',0};
-char box_l3[] = {' ','|','_','_','_','|',' ',0};
+void ubicar(int x, int y) {
+    HANDLE hCon;
+    COORD dwPos;
 
-char explosion_l1[] = {' ',' ','*','*',' ',' ',' ',0};
-char explosion_l2[] = {' ','*','*','*','*',' ',' ',0};
-char explosion_l3[] = {' ',' ','*','*',' ',' ',' ',0};
+    dwPos.X = x;
+    dwPos.Y = y;
 
-char explosion_r1[] = {'*',' ','*','*',' ','*',' ',0};
-char explosion_r2[] = {' ','*','*','*','*',' ',' ',0};
-char explosion_r3[] = {'*',' ','*','*',' ','*',' ',0};
-
-char borrar_box[] = {' ',' ',' ',' ',' ',' ',' ',0};
-
-//Variables
-int num_vidas = 3;
-int corazones = 3;
-int ix = 35; // x inicial
-int iy = 19; // y inicial
-int i,v;
-int score = 0;
-int repeticion = 0, nivel = 1;
-bool condicion = false;
-const int dimx=78, dimy=23;
-
-// Obstáculos
-int obs1x = 12, obs1y = 8; 		// Posición del obstáculo 1
-int obs2x = 17, obs2y = 12;		// Posición del obstáculo 2
-int obs3x = 58, obs3y = 6;		// Posición del obstáculo 3
-int obs4x = 70, obs4y = 9;		// Posición del obstáculo 4
-
-// Basuras
-int bas1x = 10, bas1y = 6; 		// Posición de la basura 1
-int bas2x = 14, bas2y = 11;		// Posición de la basura 2
-int bas3x = 45, bas3y = 7;		// Posición de la basura 3
-int bas4x = 65, bas4y = 10;		// Posición de la basura 4
-
-//Funcion ubicar
-void ubicar (int x, int y)
-{
-	HANDLE hCon;
-	COORD dwPos;
-
-	dwPos.X = x;
-	dwPos.Y = y;
-
-	hCon = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(hCon,dwPos);
+    hCon = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(hCon, dwPos);
 }
 
-// Mostrar el cursor
+void barra_salud(int n) {
+    ubicar(72, 1);
+    printf(" ");
+    ubicar(73, 1);
+    printf(" ");
+    ubicar(74, 1);
+    printf(" ");
+
+    for (int v = 0; v < n; v++) {
+        ubicar(72 + v, 1);
+        printf("%c", 3);
+    }
+}
+
+class Elemento {
+public:
+    int x, y;
+    char aspecto[8];
+
+    Elemento(int x, int y, const char* _aspecto) : x(x), y(y) {
+        strcpy(aspecto, _aspecto);
+    }
+
+    void dibujar() {
+        ubicar(x, y);
+        printf("%s", aspecto);
+    }
+
+    void borrar() {
+        ubicar(x, y);
+        printf("       ");
+    }
+};
+
+class Nave : public Elemento {
+public:
+    int vidas;
+    int corazones;
+
+    Nave(int x, int y) : Elemento(x, y, "\\-----/"), vidas(3), corazones(3) {}
+
+    void mover(int direccion) {
+        borrar();
+
+        switch (direccion) {
+            case IZQUIERDA:
+                if (x > 4) x -= 2;
+                break;
+            case DERECHA:
+                if (x < 67) x += 2;  // Se ajusta el límite para que la nave no desaparezca en el borde derecho
+                break;
+            case ARRIBA:
+                if (y > 4) y--;
+                break;
+            case ABAJO:
+                if (y < 19) y++;
+                break;
+        }
+
+        dibujar();
+    }
+
+    void impacto() {
+        corazones--;
+        barra_salud(corazones);
+        printf("\a"); // sonido de impacto
+    }
+
+    void reset() {
+        vidas--;
+        corazones = 3;
+        ubicar(2, 1);
+        printf("VIDAS %d", vidas);
+        barra_salud(corazones);
+    }
+};
+
+class Obstaculo : public Elemento {
+public:
+    Obstaculo(int x, int y) : Elemento(x, y, "P") {}
+
+    void mover() {
+        borrar();
+
+        if (y > 20) {
+            y = 4;
+            x = (rand() % 60) + 6;
+        }
+
+        y++;
+        dibujar();
+    }
+};
+
+class Basura : public Elemento {
+public:
+    Basura(int x, int y) : Elemento(x, y, "T") {}
+
+    void mover() {
+        borrar();
+
+        if (y > 20) {
+            y = 4;
+            x = (rand() % 60) + 6;
+        }
+
+        y++;
+        dibujar();
+    }
+};
+
 void showConsoleCursor(bool showFlag) {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
 
     CONSOLE_CURSOR_INFO cursorInfo;
     GetConsoleCursorInfo(out, &cursorInfo);
-    cursorInfo.bVisible = showFlag;  // true para mostrar, false para ocultar
+    cursorInfo.bVisible = showFlag;
     SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-// Vidas
-void vidas(int vi)
-{
-	ubicar(2,1); printf("VIDAS %d", vi);
+void dibujar_borde() {
+    for (int i = 2; i <= 77; i++) {  // Se ajusta la condición para que incluya el borde derecho
+        ubicar(i, 3);
+        printf_s("%c", 205);
+        ubicar(i, 23);
+        printf_s("%c", 205);
+    }
+
+    for (int i = 4; i < 24; i++) {
+        ubicar(2, i);
+        printf_s("%c", 186);
+        ubicar(77, i);
+        printf_s("%c", 186);
+    }
+
+    ubicar(2, 3);
+    printf_s("%c", 201);
+    ubicar(2, 23);
+    printf_s("%c", 200);
+    ubicar(77, 3);
+    printf_s("%c", 187);
+    ubicar(77, 23);
+    printf_s("%c", 188);
 }
 
-// Score
-void score_view(int s)
-{
-	ubicar(2,25); printf("SCORE %d", s);
+void jugar(Nave& nave, Obstaculo& obs1, Obstaculo& obs2, Obstaculo& obs3, Obstaculo& obs4, Basura& bas1, Basura& bas2, Basura& bas3, Basura& bas4) {
+    obs1.mover();
+    obs2.mover();
+    obs3.mover();
+    obs4.mover();
+
+    bas1.mover();
+    bas2.mover();
+    bas3.mover();
+    bas4.mover();
+
+    if (kbhit()) {
+        unsigned char tecla = getch();
+        switch (tecla) {
+            case IZQUIERDA:
+            case DERECHA:
+            case ARRIBA:
+            case ABAJO:
+                nave.mover(tecla);
+                break;
+        }
+    }
+
+    if ((obs1.x > nave.x && obs1.x < nave.x + 6 && obs1.y == nave.y - 1) ||
+        (obs2.x > nave.x && obs2.x < nave.x + 6 && obs2.y == nave.y - 1) ||
+        (obs3.x > nave.x && obs3.x < nave.x + 6 && obs3.y == nave.y - 1) ||
+        (obs4.x > nave.x && obs4.x < nave.x + 6 && obs4.y == nave.y - 1)) {
+        nave.impacto();
+    }
+
+    if ((bas1.x > nave.x && bas1.x < nave.x + 6 && bas1.y == nave.y - 1) ||
+        (bas2.x > nave.x && bas2.x < nave.x + 6 && bas2.y == nave.y - 1) ||
+        (bas3.x > nave.x && bas3.x < nave.x + 6 && bas3.y == nave.y - 1) ||
+        (bas4.x > nave.x && bas4.x < nave.x + 6 && bas4.y == nave.y - 1)) {
+        printf("\a");
+    }
+
+    nave.dibujar();
 }
 
-// Barra de salud
-void barra_salud(int n)
-{
-	ubicar(72,1); printf(" ");
-	ubicar(73,1); printf(" ");
-	ubicar(74,1); printf(" ");
-	
-	for(v = 0; v < n; v++){
-		ubicar(72+v,1); 
-		printf("%c", 3);
-	}
-}
+int main() {
+    showConsoleCursor(false);
+    dibujar_borde();
 
-//Limite del juego
-void dibujar_borde()
-{
-	//lineas horizontales
-	for(int i = 2; i < dimx; i++)
-	{
-		ubicar(i,3); printf_s("%c", 205);
-		ubicar(i,23); printf_s("%c", 205);
-	}
-	//lineas verticales
-	for(int i = 4; i < dimy; i++)
-	{
-		ubicar(2,i); printf_s("%c", 186);
-		ubicar(77,i); printf_s("%c", 186);
-	}
-	//esquinas
-	ubicar(2,3); printf_s("%c", 201);
-	ubicar(2,23); printf_s("%c", 200);
-	ubicar(77,3); printf_s("%c", 187);
-	ubicar(77,23); printf_s("%c", 188);
-}
+    Nave nave(35, 19);
+    Obstaculo obs1(12, 8), obs2(17, 12), obs3(58, 6), obs4(70, 9);
+    Basura bas1(10, 6), bas2(14, 11), bas3(45, 7), bas4(65, 10);  // Ajuste de la posición de bas4
+    int velocidad = 60;  // Ajuste la velocidad a su preferencia (menos es más rápido)
 
-//Explosion
-void explosion(void)
-{
-	ubicar(ix,iy); printf("%s", explosion_l1);
-	ubicar(ix,iy+1); printf("%s", explosion_l2);
-	ubicar(ix,iy+2); printf("%s", explosion_l3);
-	Sleep(350);
+    while (nave.vidas > 0) {
+        jugar(nave, obs1, obs2, obs3, obs4, bas1, bas2, bas3, bas4);
+        this_thread::sleep_for(chrono::milliseconds(velocidad));  // Añadida pausa para controlar la velocidad
+    }
 
-	ubicar(ix,iy); printf("%s", explosion_r1);
-	ubicar(ix,iy+1); printf("%s", explosion_r2);
-	ubicar(ix,iy+2); printf("%s", explosion_r3);
-	Sleep(350);
+    ubicar(34, 12);
+    printf("GAME OVER");
 
-	ubicar(ix,iy); printf("%s", borrar_box);
-	ubicar(ix,iy+1); printf("%s", borrar_box);
-	ubicar(ix,iy+2); printf("%s", borrar_box);
-}
-
-//Jugar
-
-void jugar(void)
-{
-	//rutina asteroides
-	ubicar(obs1x,obs1y); printf("%c", 251);
-	ubicar(obs2x,obs2y); printf("%c", 251);
-	ubicar(obs3x,obs3y); printf("%c", 251);
-	ubicar(obs4x,obs4y); printf("%c", 251);
-
-
-	ubicar(bas1x,bas1y); printf("%c", 184);
-	ubicar(bas2x,bas2y); printf("%c", 184);
-	ubicar(bas3x,bas3y); printf("%c", 184);
-	ubicar(bas4x,bas4y); printf("%c", 184);
-
-
-	Sleep(150);
-
-	//borrar obstáculos
-	ubicar(obs1x,obs1y); printf(" ");
-	ubicar(obs2x,obs2y); printf(" ");
-	ubicar(obs3x,obs3y); printf(" ");
-	ubicar(obs4x,obs4y); printf(" ");
-	
-	//borrar basura
-	ubicar(bas1x,bas1y); printf(" ");
-	ubicar(bas2x,bas2y); printf(" ");
-	ubicar(bas3x,bas3y); printf(" ");
-	ubicar(bas4x,bas4y); printf(" ");
-
-	// Obstáculos
-	if( obs1y > 20)
-	{
-		obs1y = 4;
-		obs1x = (rand()%70) + 6;
-	}
-	if(obs2y > 20)
-	{
-		obs2y = 4;
-		obs2x = (rand()%70) + 6;
-	}
-	if(obs3y > 20)
-	{
-		obs3y = 4;
-		obs3x = (rand()%70) + 6;
-	}
-	if(obs4y > 20)
-	{
-		obs4y = 4;
-		obs4x = (rand()%70) + 6;
-	}
-
-	// BASURA
-	if( bas1y > 20)
-	{
-		bas1y = 4;
-		bas1x = (rand()%70) + 6;
-	}
-	if(bas2y > 20)
-	{
-		bas2y = 4;
-		bas2x = (rand()%70) + 6;
-	}
-	if(bas3y > 20)
-	{
-		bas3y = 4;
-		bas3x = (rand()%70) + 6;
-	}
-	if(bas4y > 20)
-	{
-		bas4y = 4;
-		bas4x = (rand()%70) + 6;
-	}
-
-if(kbhit()){
-	//mover nave
-	unsigned char tecla = getch();
-
-	switch(tecla)
-	{
-		case IZQUIERDA:
-			if ( ix > 4)
-			{
-				//borrar el avion
-				ubicar(ix,iy); printf("%s", borrar_box);
-				ubicar(ix,iy+1); printf("%s", borrar_box);
-				ubicar(ix,iy+2); printf("%s", borrar_box);
-
-				ix -=2;
-
-				//dibujar_borde el avion
-				ubicar(ix,iy); printf("%s", box_l1);
-				ubicar(ix,iy+1); printf("%s", box_l2);
-				ubicar(ix,iy+2); printf("%s", box_l3);
-			}
-			break;
-		case DERECHA:
-			if ( ix < 68)
-			{
-				//borrar el avion
-				ubicar(ix,iy); printf("%s", borrar_box);
-				ubicar(ix,iy+1); printf("%s", borrar_box);
-				ubicar(ix,iy+2); printf("%s", borrar_box);
-
-				ix +=2;
-
-				//dibujar_borde el avion
-				ubicar(ix,iy); printf("%s", box_l1);
-				ubicar(ix,iy+1); printf("%s", box_l2);
-				ubicar(ix,iy+2); printf("%s", box_l3);
-			}
-			break;
-
-			case ARRIBA: // Tecla de flecha arriba
-				if ( iy > 4)
-				{
-					//borrar el avion
-					ubicar(ix,iy); printf("%s", borrar_box);
-					ubicar(ix,iy+1); printf("%s", borrar_box);
-					ubicar(ix,iy+2); printf("%s", borrar_box);
-
-					iy--;
-
-					//dibujar el avion
-					ubicar(ix,iy); printf("%s", box_l1);
-					ubicar(ix,iy+1); printf("%s", box_l2);
-					ubicar(ix,iy+2); printf("%s", box_l3);
-				}
-				break;
-			case ABAJO: // Tecla de flecha abajo
-				if ( iy < dimy - 3)
-				{
-					//borrar el avion
-					ubicar(ix,iy); printf("%s", borrar_box);
-					ubicar(ix,iy+1); printf("%s", borrar_box);
-					ubicar(ix,iy+2); printf("%s", borrar_box);
-
-					iy++;
-
-					//dibujar el avion
-					ubicar(ix,iy); printf("%s", box_l1);
-					ubicar(ix,iy+1); printf("%s", box_l2);
-					ubicar(ix,iy+2); printf("%s", box_l3);
-				}
-				break;
-	}
-}
-
-	// Golpe Obstáculo
-	if( 
-		( obs1x > ix && obs1x < ix+6 && obs1y == iy-1) || 
-		( obs2x > ix && obs2x < ix+6 && obs2y == iy-1) || 
-		( obs3x > ix && obs3x < ix+6 && obs3y == iy-1) || 
-		( obs4x > ix && obs4x < ix+6 && obs4y == iy-1) 
-	) {
-		corazones--;
-		barra_salud(corazones);
-		printf("\a"); // sonido de impacto
-	}
-
-	if( 
-		( bas1x > ix && bas1x < ix+6 && bas1y == iy-1) || 
-		( bas2x > ix && bas2x < ix+6 && bas2y == iy-1) || 
-		( bas3x > ix && bas3x < ix+6 && bas3y == iy-1) || 
-		( bas4x > ix && bas4x < ix+6 && bas4y == iy-1) 
-	) {
-		score++;
-		score_view(score);
-	}
-
-	ubicar(ix,iy); printf("%s", box_l1); 
-	ubicar(ix,iy+1); printf("%s", box_l2); 
-	ubicar(ix,iy+2); printf("%s", box_l3); 
-
-	if ( corazones == 0) {
-		num_vidas--;
-		vidas(num_vidas);
-		explosion();
-		corazones = 3;
-		barra_salud(corazones);
-	}
-	obs1y++;
-	obs2y++;
-	obs3y++;
-	obs4y++;
-
-
-	bas1y++;
-	bas2y++;
-	bas3y++;
-	bas4y++;
-
-}
-
-int main()
-{
-
-	showConsoleCursor(false);
-	dibujar_borde();
-	vidas(num_vidas);
-	score_view(score);
-	barra_salud(corazones);
-
-	//Avion
-	ubicar(ix,iy); printf("%s", box_l1);
-	ubicar(ix,iy+1); printf("%s", box_l2);
-	ubicar(ix,iy+2); printf("%s", box_l3);
-
-	while( num_vidas > 0 ) {
-		jugar();
-	}
-
-	ubicar(34,12); printf("GAME OVER");
-
-	getch();
-	return 0;
+    getch();
+    return 0;
 }
