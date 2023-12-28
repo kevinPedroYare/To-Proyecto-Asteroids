@@ -60,8 +60,8 @@ Game::Game()
       playerTexture(), player(), obstacleTexture(), obstacleTexture1(), obstacleTexture2(), obstacles(),
       font(), scoreText(), score(0), hitBuffer(), hitSound(), spawnTimer()
 {
-    if (!playerTexture.loadFromFile("tacho.png") || !obstacleTexture.loadFromFile("basura.png") ||
-        !obstacleTexture1.loadFromFile("tacho.png") || !obstacleTexture2.loadFromFile("tacho.png")) {
+    if (!playerTexture.loadFromFile("tacho.png") || !obstacleTexture.loadFromFile("basura1.png") ||
+        !obstacleTexture1.loadFromFile("basura2.png") || !obstacleTexture2.loadFromFile("basura3.png")) {
         std::cerr << "Error al cargar texturas." << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -75,7 +75,7 @@ Game::Game()
     }
     scoreText.setFont(font);
     scoreText.setCharacterSize(24);
-    scoreText.setFillColor(sf::Color::White);
+    scoreText.setFillColor(sf::Color::Black);
     scoreText.setPosition(10.0f, 10.0f);
 
     if (!hitBuffer.loadFromFile("beep.wav")) {
@@ -84,7 +84,7 @@ Game::Game()
     }
     hitSound.setBuffer(hitBuffer);
     
-    if (!backgroundTexture.loadFromFile("tacho.png")) {
+    if (!backgroundTexture.loadFromFile("fondo.png")) {
     std::cerr << "Error al cargar la imagen de fondo." << std::endl;
     std::exit(EXIT_FAILURE);
     }
@@ -141,7 +141,7 @@ void Game::update(sf::Time deltaTime) {
                 hitSound.play();
                 sf::SoundBuffer fallBuffer;
                 sf::Sound fallSound;
-                if (fallBuffer.loadFromFile("beep.wav")) {
+                if (fallBuffer.loadFromFile("beep2.wav")) {
                     fallSound.setBuffer(fallBuffer);
                     fallSound.play();
                 }
