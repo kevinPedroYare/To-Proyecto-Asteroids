@@ -84,7 +84,7 @@ Game::Game()
     }
     hitSound.setBuffer(hitBuffer);
     
-    if (!backgroundTexture.loadFromFile("fondo.png")) {
+    if (!backgroundTexture.loadFromFile("tacho.png")) {
     std::cerr << "Error al cargar la imagen de fondo." << std::endl;
     std::exit(EXIT_FAILURE);
     }
