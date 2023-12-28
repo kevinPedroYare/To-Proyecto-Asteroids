@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 #define IZQUIERDA sf::Keyboard::Left
 #define DERECHA sf::Keyboard::Right
@@ -17,6 +18,7 @@ const float SPAWN_INTERVAL = 2.0f;
 class Game {
 public:
     Game();
+    ~Game(); // Agregado para liberar recursos
     void run();
 
 private:
@@ -51,29 +53,40 @@ Game::Game()
     : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "FinalTO"),
     playerTexture(), player(), obstacleTexture(), obstacles(),
     font(), scoreText(), score(0), hitBuffer(), hitSound(), spawnTimer() {
-   
-    
     // Cargar texturas
-    playerTexture.loadFromFile("tacho.png");
-    obstacleTexture.loadFromFile("basura.png");
+    if (!playerTexture.loadFromFile("tacho.png") || !obstacleTexture.loadFromFile("basura.png")) {
+        // Manejar el error al cargar texturas
+        std::cerr << "Error al cargar texturas." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
 
     // Inicializar jugador
     player.setTexture(playerTexture);
     player.setPosition(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT - 50.0f);
-    
-    //Desactivar sincronizacion vertical;
-    window.setVerticalSyncEnabled(false);
 
     // Inicializar texto
-    font.loadFromFile("Futura Condensed.ttf");
+    if (!font.loadFromFile("Futura Condensed.ttf")) {
+        // Manejar el error al cargar la fuente
+        std::cerr << "Error al cargar la fuente." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
     scoreText.setFont(font);
     scoreText.setCharacterSize(24);
     scoreText.setFillColor(sf::Color::White);
     scoreText.setPosition(10.0f, 10.0f);
 
     // Inicializar sonido
-    hitBuffer.loadFromFile("beep.wav");
+    if (!hitBuffer.loadFromFile("beep.wav")) {
+        // Manejar el error al cargar el sonido
+        std::cerr << "Error al cargar el sonido." << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
     hitSound.setBuffer(hitBuffer);
+}
+
+Game::~Game() {
+    // Liberar recursos
+    // No es necesario en este caso ya que los objetos sf::Texture y sf::SoundBuffer se encargan automáticamente de liberar sus recursos.
 }
 
 void Game::run() {
@@ -181,3 +194,4 @@ int main() {
 
     return 0;
 }
+
