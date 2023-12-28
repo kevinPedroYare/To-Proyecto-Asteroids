@@ -51,6 +51,8 @@ Game::Game()
     : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "FinalTO"),
     playerTexture(), player(), obstacleTexture(), obstacles(),
     font(), scoreText(), score(0), hitBuffer(), hitSound(), spawnTimer() {
+   
+    
     // Cargar texturas
     playerTexture.loadFromFile("tacho.png");
     obstacleTexture.loadFromFile("basura.png");
@@ -58,6 +60,9 @@ Game::Game()
     // Inicializar jugador
     player.setTexture(playerTexture);
     player.setPosition(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT - 50.0f);
+    
+    //Desactivar sincronizacion vertical;
+    window.setVerticalSyncEnabled(false);
 
     // Inicializar texto
     font.loadFromFile("Futura Condensed.ttf");
