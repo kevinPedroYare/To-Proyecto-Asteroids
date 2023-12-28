@@ -49,6 +49,10 @@ private:
     sf::Sound hitSound;
 
     sf::Time spawnTimer;
+    
+    sf::Texture backgroundTexture;
+    sf::Sprite background;
+
 };
 
 Game::Game()
@@ -79,6 +83,13 @@ Game::Game()
         std::exit(EXIT_FAILURE);
     }
     hitSound.setBuffer(hitBuffer);
+    
+    if (!backgroundTexture.loadFromFile("fondo.png")) {
+    std::cerr << "Error al cargar la imagen de fondo." << std::endl;
+    std::exit(EXIT_FAILURE);
+    }
+    background.setTexture(backgroundTexture);
+
 }
 
 Game::~Game() {
@@ -153,16 +164,23 @@ void Game::update(sf::Time deltaTime) {
 void Game::render() {
     window.clear();
 
+    // Dibujar fondo
+    window.draw(background);
+
+    // Dibujar jugador
     window.draw(player);
 
+    // Dibujar obstáculos
     for (const auto& obstacle : obstacles) {
         window.draw(obstacle);
     }
 
+    // Dibujar texto de puntaje
     window.draw(scoreText);
 
     window.display();
 }
+
 
 void Game::spawnObstacle() {
     sf::Sprite obstacle;
