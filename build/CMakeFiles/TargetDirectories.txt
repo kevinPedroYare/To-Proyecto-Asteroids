@@ -1,0 +1,3 @@
+/mnt/e/VisualStudioWorkspace/finalto2/build/CMakeFiles/main.dir
+/mnt/e/VisualStudioWorkspace/finalto2/build/CMakeFiles/edit_cache.dir
+/mnt/e/VisualStudioWorkspace/finalto2/build/CMakeFiles/rebuild_cache.dir
