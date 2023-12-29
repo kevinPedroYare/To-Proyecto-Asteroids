@@ -60,8 +60,8 @@ Game::Game()
       playerTexture(), player(), obstacleTexture(), obstacleTexture1(), obstacleTexture2(), obstacles(),
       font(), scoreText(), score(0), hitBuffer(), hitSound(), spawnTimer()
 {
-    if (!playerTexture.loadFromFile("tacho.png") || !obstacleTexture.loadFromFile("basura1.png") ||
-        !obstacleTexture1.loadFromFile("basura2.png") || !obstacleTexture2.loadFromFile("basura3.png")) {
+    if (!playerTexture.loadFromFile("resources/tacho.png") || !obstacleTexture.loadFromFile("resources/basura1.png") ||
+        !obstacleTexture1.loadFromFile("resources/basura2.png") || !obstacleTexture2.loadFromFile("resources/basura3.png")) {
         std::cerr << "Error al cargar texturas." << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -69,7 +69,7 @@ Game::Game()
     player.setTexture(playerTexture);
     player.setPosition(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT - 50.0f);
 
-    if (!font.loadFromFile("Futura Condensed.ttf")) {
+    if (!font.loadFromFile("resources/Futura Condensed.ttf")) {
         std::cerr << "Error al cargar la fuente." << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -78,13 +78,13 @@ Game::Game()
     scoreText.setFillColor(sf::Color::Black);
     scoreText.setPosition(10.0f, 10.0f);
 
-    if (!hitBuffer.loadFromFile("beep.wav")) {
+    if (!hitBuffer.loadFromFile("resources/beep.wav")) {
         std::cerr << "Error al cargar el sonido." << std::endl;
         std::exit(EXIT_FAILURE);
     }
     hitSound.setBuffer(hitBuffer);
     
-    if (!backgroundTexture.loadFromFile("fondo.png")) {
+    if (!backgroundTexture.loadFromFile("resources/fondo.png")) {
     std::cerr << "Error al cargar la imagen de fondo." << std::endl;
     std::exit(EXIT_FAILURE);
     }
@@ -141,7 +141,7 @@ void Game::update(sf::Time deltaTime) {
                 hitSound.play();
                 sf::SoundBuffer fallBuffer;
                 sf::Sound fallSound;
-                if (fallBuffer.loadFromFile("beep2.wav")) {
+                if (fallBuffer.loadFromFile("resources/beep2.wav")) {
                     fallSound.setBuffer(fallBuffer);
                     fallSound.play();
                 }
