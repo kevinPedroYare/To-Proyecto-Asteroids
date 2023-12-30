@@ -1,5 +1,3 @@
-
-# To-Proyecto-Asteroids
 # Trash Collector
 
 Este proyecto es un juego simple desarrollado en C++ utilizando la biblioteca SFML. El objetivo del juego es recolectar la basura que cae del cielo con un contenedor móvil, evitando las colisiones con las bolsas de basura. A continuación, se proporciona información sobre la estructura del proyecto, las dependencias necesarias, instrucciones de compilación y uso, así como detalles sobre cómo contribuir al proyecto.
